@@ -1,0 +1,47 @@
+package com.example.blog2.po;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name = "t_user")
+@JsonIgnoreProperties(value = { "hibernateLazyInitializer"})
+// 替换@Data注解，手动排除关联字段
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = "blogs") // 排除blogs字段
+@ToString(exclude = "blogs") // 排除blogs字段
+public class User {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String nickname;
+    private String username;
+    private String password;
+    private String email;
+    private String avatar;
+    private String loginProvince;
+    private String loginCity;
+    private String loginLat;
+    private String loginLng;
+    private String type;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastLoginTime;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Blog> blogs = new ArrayList<>();
+}
