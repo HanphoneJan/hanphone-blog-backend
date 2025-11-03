@@ -218,23 +218,25 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Blog getAndConvert(Long userId, Long id) {
-        requireNonNull(userId, "user id must not be null");
         requireNonNull(id, "blog id must not be null");
-
         try {
             Blog blog = blogRepository.getOne(id);
-
+            // 累加访问量
             blog.setViews(blog.getViews() + 1);
             blog = blogRepository.save(blog);
-
+            // 复制属性
             Blog b = new Blog();
             BeanUtils.copyProperties(blog, b);
             String content = b.getContent() != null ? b.getContent() : "";
             b.setContent(content);
-
-            Optional<UserBlogLike> existingLike = userBlogLikeRepository.findByUserIdAndBlogId(userId, id);
-            b.setLiked(existingLike.isPresent());
-
+            // 如果userId为null，直接默认"未点赞"；否则查询是否点赞
+            if (userId != null) {
+                Optional<UserBlogLike> existingLike = userBlogLikeRepository.findByUserIdAndBlogId(userId, id);
+                b.setLiked(existingLike.isPresent());
+            } else {
+                // userId为空时，默认未点赞
+                b.setLiked(false);
+            }
             return b;
         } catch (EntityNotFoundException e) {
             throw new IllegalArgumentException("Blog not found with id: " + id, e);
