@@ -4,14 +4,14 @@ import com.example.blog2.po.Blog;
 import com.example.blog2.po.Result;
 import com.example.blog2.po.StatusCode;
 import com.example.blog2.service.BlogService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 @CrossOrigin
 public class ArchiveShowController {
 

@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
 @RestController
 @CrossOrigin
 public class UserController {
@@ -31,7 +30,9 @@ public class UserController {
     @PostMapping(value = "/login")
     public Result<Map<String, Object>> login(@RequestBody Map<String, User> para) {
         User u = para.get("user");
+        System.out.println(u);
         User user = userService.checkUser(u.getUsername(), u.getPassword());
+        System.out.println(user);
         if (user != null) {
             TokenUtil.TokenInfo token = TokenUtil.sign(user);
             Map<String, Object> info = new HashMap<>();
@@ -56,8 +57,12 @@ public class UserController {
     @PostMapping(value = "/register")
     public Result<Map<String, Object>> post(@RequestBody Map<String, User> para)  {
         User u = para.get("user");
+        boolean isExists = userService.isUserExists(u.getUsername().trim(), u.getEmail().trim());
+        if (isExists) {
+            return new Result<>(false, StatusCode.ERROR, "用户名或邮箱已被占用", null);
+        }
         String encryptPassword = BcryptUtils.encrypt(u.getPassword());
-        u.setPassword(BcryptUtils.encrypt(encryptPassword));
+        u.setPassword(encryptPassword);
         User user = userService.save(u);
         TokenUtil.TokenInfo tokenInfo = TokenUtil.sign(user);
         Map<String, Object> info = new HashMap<>();
@@ -104,8 +109,8 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session){
+    public Result<Void>  logout(HttpSession session){
         session.removeAttribute("user");
-        return "redirect:/admin";
+        return new Result<>(true, StatusCode.OK, "退出登录成功", null);
     }
 }

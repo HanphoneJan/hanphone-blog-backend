@@ -28,10 +28,20 @@ public class UserServiceImpl implements UserService {
         Objects.requireNonNull(password, "password must not be null");
 
         try {
+            // 第一步：先通过用户名查询用户
             User user = userRepository.findByUsername(username);
+
+            // 第二步：若用户名未查到，通过邮箱查询用户
+            if (user == null) {
+                user = userRepository.findByEmail(username); // 将入参username作为邮箱值查询
+            }
+
+            // 第三步：若用户名/邮箱均未查到，返回null
             if (user == null) {
                 return null;
             }
+
+            // 第四步：验证密码（无论通过用户名还是邮箱查到，均验证密码）
             String hashedPassword = user.getPassword();
             if (BcryptUtils.verify(password, hashedPassword)) {
                 return user;
@@ -39,6 +49,25 @@ public class UserServiceImpl implements UserService {
             return null;
         } catch (Exception e) {
             throw new RuntimeException("Failed to check user", e);
+        }
+    }
+
+    // 【新增】仅校验用户是否存在（用户名或邮箱已被占用）
+    @Override
+    public boolean isUserExists(String username, String email) {
+        Objects.requireNonNull(username, "username must not be null");
+        Objects.requireNonNull(email, "email must not be null");
+        try {
+            // 1. 检查用户名是否已存在
+            User userByUsername = userRepository.findByUsername(username);
+            if (userByUsername != null) {
+                return true;
+            }
+            // 2. 检查邮箱是否已存在
+            User userByEmail = userRepository.findByEmail(email);
+            return userByEmail != null;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to check user existence", e);
         }
     }
 

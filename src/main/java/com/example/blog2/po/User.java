@@ -22,16 +22,23 @@ public class User {
     @GeneratedValue
     private Long id;
     private String nickname;
+
+    @Column(name = "username")
     private String username;
+
+    @Column(name="password")
     private String password;
+
+    @Column(name="email")
     private String email;
+
     private String avatar;
     private String loginProvince;
     private String loginCity;
     private String loginLat;
     private String loginLng;
     private String type;
-
+    private Boolean isOnline;
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 

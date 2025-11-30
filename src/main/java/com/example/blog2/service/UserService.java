@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserService {
     User checkUser(String username, String password);
-
+    boolean isUserExists(String username, String email);
     User findUserById(Long id);
 
     User save(User user);

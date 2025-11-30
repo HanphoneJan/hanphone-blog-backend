@@ -14,10 +14,9 @@ import org.apache.commons.logging.LogFactory;
 
 public class TokenUtil {
 
-    private static final long EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000; // 7天有效
-    private static final String TOKEN_SECRET = "xxxxxxx"; // 密钥盐
+    private static final long EXPIRE_TIME= 7*24*60*60*1000; //7天有效
+    private static final String TOKEN_SECRET="Hanphone0826";  //密钥盐
     private static final Log log = LogFactory.getLog(TokenUtil.class);
-
     /**
      * 签名生成
      */
@@ -52,10 +51,11 @@ public class TokenUtil {
         }
     }
 
+
     /**
      * 签名验证
      */
-    public static boolean verify(String token) {
+    public static boolean verify(String token){
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).withIssuer("auth0").build();
             DecodedJWT jwt = verifier.verify(token);
@@ -64,7 +64,7 @@ public class TokenUtil {
             System.out.println("userType: " + jwt.getClaim("userType").asString());
             System.out.println("过期时间：      " + jwt.getExpiresAt());
             return true;
-        } catch (Exception e) {
+        } catch (Exception e){
             return false;
         }
     }
@@ -72,13 +72,13 @@ public class TokenUtil {
     /**
      * 管理员认证
      */
-    public static boolean adminVerify(String token) {
+    public static boolean adminVerify(String token){
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(TOKEN_SECRET)).withIssuer("auth0").build();
             DecodedJWT jwt = verifier.verify(token);
-            // System.out.println("管理员认证通过");
+            //                System.out.println("管理员认证通过");
             return "1".equals(jwt.getClaim("userType").asString());
-        } catch (Exception e) {
+        } catch (Exception e){
             return false;
         }
     }
